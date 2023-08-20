@@ -29,12 +29,22 @@ int main()
     numTexture[6].loadFromFile("sprites/7.png");
     numTexture[7].loadFromFile("sprites/8.png");
     flagTexture.loadFromFile("sprites/flag.png");
+    
     sf::RectangleShape tiles(sf::Vector2f(50.0f, 50.0f));
     tiles.setTexture(&tilesTexture);
+
+    sf::Text gameOverText;
+    sf::Font font;
+    font.loadFromFile("font/pixel.ttf");
+    gameOverText.setFont(font);
+    gameOverText.setCharacterSize(60);
+    gameOverText.setFillColor(sf::Color::Red);
 
     sf::RectangleShape tileListShow[16][16];
     int tileListHidden[16][16]; // 0: emptyTile, 1-8: nums, 9: bombs
     std::vector<std::pair<int, int>> bombLoc;
+
+    bool gameOver = false;
 
     int bombAmount = 20;
     srand(time(0));
@@ -139,7 +149,7 @@ int main()
             {
                 //mouse click event
                 case sf::Event::MouseButtonPressed:
-                    if (evnt.mouseButton.button == sf::Mouse::Left)
+                    if (evnt.mouseButton.button == sf::Mouse::Left && !gameOver)
                     {
                         int x = int(evnt.mouseButton.x) / 50;
                         int y = int(evnt.mouseButton.y) / 50;
@@ -150,10 +160,14 @@ int main()
                                 break;
                             case 9:
                                 tileListShow[y][x].setTexture(&bombTexture);
+                                gameOverText.setString("Game Over: You Lose");
+                                gameOverText.setPosition(window.getSize().x / 2.0f - gameOverText.getGlobalBounds().width / 2.0f,
+                                                         window.getSize().y / 2.0f - gameOverText.getGlobalBounds().height / 2.0f);
+                                gameOver = true;
                                 break;
                         }
                     }
-                    if (evnt.mouseButton.button == sf::Mouse::Right)
+                    if (evnt.mouseButton.button == sf::Mouse::Right && !gameOver)
                     {
                         int x = int(evnt.mouseButton.x) / 50;
                         int y = int(evnt.mouseButton.y) / 50;
@@ -177,6 +191,10 @@ int main()
                     window.draw(tileListShow[i][j]);
                 }
             }
+            if (gameOver) {
+                window.draw(gameOverText);
+            }
+
             window.display();
         }
     }
