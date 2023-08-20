@@ -4,6 +4,7 @@
 #include <vector>
 #include <random>
 void clearEmptySpaces(int x, int y, sf::RectangleShape tileListShow[][16], int tileListHide[][16], sf::Texture* numTexture, sf::Texture &emptyTile);
+bool checkWin(sf::RectangleShape tileListShow[][16], int tileListHide[][16], sf::Texture& tile);
 int main()
 {
 
@@ -157,6 +158,12 @@ int main()
                         {
                             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8:
                                 clearEmptySpaces(x, y, tileListShow, tileListHidden, numTexture, emptyTileTexture);
+                                if (checkWin(tileListShow, tileListHidden, tilesTexture)) {
+                                    gameOverText.setString("Game Over: You Win");
+                                    gameOverText.setPosition(window.getSize().x / 2.0f - gameOverText.getGlobalBounds().width / 2.0f,
+                                        window.getSize().y / 2.0f - gameOverText.getGlobalBounds().height / 2.0f);
+                                    gameOver = true;
+                                }
                                 break;
                             case 9:
                                 tileListShow[y][x].setTexture(&bombTexture);
@@ -225,6 +232,17 @@ void clearEmptySpaces(int x, int y, sf::RectangleShape tileListShow[][16], int t
         clearEmptySpaces(x + 1, y + 1, tileListShow, tileListHide, numTexture, emptyTile);
         
     }
+}
+
+bool checkWin(sf::RectangleShape tileListShow[][16], int tileListHide[][16], sf::Texture& tile) {
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            if (tileListHide[i][j] < 9 && tileListShow[i][j].getTexture() == &tile) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 
